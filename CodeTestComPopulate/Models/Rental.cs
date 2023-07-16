@@ -7,7 +7,6 @@ namespace codeTestCom.Models
     public class Rental
     {
         [JsonProperty("id")]
-        //[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string Id { get; set; }
         [JsonProperty(PropertyName = "partitionKey")]
         public string? PartitionKey { get; set; }
@@ -100,9 +99,9 @@ namespace codeTestCom.Models
             return Price;
         }
 
-        public Rental(string id, string carId, CarType carType, string carPartitionKey, int numOfContractedDays)
+        public Rental(string carId, CarType carType, string carPartitionKey, int numOfContractedDays)
         {
-            this.Id = id;
+            this.Id = Guid.NewGuid().ToString();
             this.CarId = carId;
             this.CarType = carType;
             this.NumOfContractedDays = numOfContractedDays;

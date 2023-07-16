@@ -29,6 +29,8 @@ namespace CodeTestComPopulate
         private string databaseId = "RentalDB";
         private string containerId = "Items";
 
+        private static string _rentalId;
+
         // <Main>
         public static async Task Main(string[] args)
         {
@@ -231,10 +233,11 @@ namespace CodeTestComPopulate
 
             if (rented)
             {
-                Rental rental = new Rental("1", car.Id, car.Type, car.PartitionKey, 10);
+                Rental rental = new Rental(car.Id, car.Type, car.PartitionKey, 10);
                 rental.CalculatePrice();
                 await PopulateItem(rental, rental.Id, rental.PartitionKey);
                 await QueryItemsAsync<Rental>(rental.PartitionKey);
+                _rentalId = rental.Id;
             }
             
         }
@@ -247,11 +250,10 @@ namespace CodeTestComPopulate
         private async Task DeleteRentalItemAsync()
         {
             var partitionKeyValue = "BMW#10";
-            var id = "1";
 
             // Delete an item. Note we must provide the partition key value and id of the item to delete
-            ItemResponse<Rental> BMWRentalResponse = await this.container.DeleteItemAsync<Rental>(id, new PartitionKey(partitionKeyValue));
-            Console.WriteLine("Deleted Rental [{0},{1}]\n", partitionKeyValue, id);
+            ItemResponse<Rental> BMWRentalResponse = await this.container.DeleteItemAsync<Rental>(_rentalId, new PartitionKey(partitionKeyValue));
+            Console.WriteLine("Deleted Rental [{0},{1}]\n", partitionKeyValue, _rentalId);
 
             await UpdateCarRented(false);
         }
