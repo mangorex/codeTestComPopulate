@@ -177,12 +177,12 @@ namespace CodeTestComPopulate
             User user5 = new User("Paca", "Pepa", "5331319R", 21, EnumSex.Female);
             User user6 = new User("Pepa", "Pujol", "5324329R", 40, EnumSex.Other);
 
-            await PopulateItem(user1, user1.Id, user1.PartitionKey, this.containerUser);
-            await PopulateItem(user2, user2.Id, user2.PartitionKey, this.containerUser);
-            await PopulateItem(user3, user3.Id, user3.PartitionKey, this.containerUser);
-            await PopulateItem(user4, user4.Id, user4.PartitionKey, this.containerUser);
-            await PopulateItem(user5, user5.Id, user5.PartitionKey, this.containerUser);
-            await PopulateItem(user6, user6.Id, user6.PartitionKey, this.containerUser);
+            await PopulateItem(user1, user1.Dni, user1.PartitionKey, this.containerUser);
+            await PopulateItem(user2, user2.Dni, user2.PartitionKey, this.containerUser);
+            await PopulateItem(user3, user3.Dni, user3.PartitionKey, this.containerUser);
+            await PopulateItem(user4, user4.Dni, user4.PartitionKey, this.containerUser);
+            await PopulateItem(user5, user5.Dni, user5.PartitionKey, this.containerUser);
+            await PopulateItem(user6, user6.Dni, user6.PartitionKey, this.containerUser);
         }
         // </AddItemsToContainerAsync>
 
@@ -258,7 +258,7 @@ namespace CodeTestComPopulate
             if (rented)
             {
                 User user = await GetUserAsyncByNameSurname("Manuel", "Gomez");
-                Rental rental = new Rental(car.Id, car.Type, car.PartitionKey, 10, user.Id);
+                Rental rental = new Rental(car.Id, car.Type, car.PartitionKey, 10, user.Dni);
                 rental.CalculatePrice();
                 await PopulateItem(rental, rental.Id, rental.PartitionKey, this.containerRental);
                 await QueryItemsAsync<Rental>(this.containerRental, rental.PartitionKey);

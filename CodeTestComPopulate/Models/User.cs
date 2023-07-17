@@ -6,14 +6,13 @@ namespace codeTestCom.Models
 {
     public class User
     {
-        [JsonProperty("id", PropertyName = "id")]
-        public string Id { get; set; }
+        [JsonProperty("id")]
+        public string Dni { get; set; }
         [JsonProperty(PropertyName = "partitionKey")]
         public string PartitionKey { get; set; }
 
         public string Name { get; set; }
         public string Surname { get; set; }
-        public string Dni { get; set; }
         public int Age { get; set; }
         public int LoyaltyPoints { get; set; }
         public EnumSex Sex { get; set; }
@@ -25,7 +24,6 @@ namespace codeTestCom.Models
 
         public User(string name, string surname, string dni, int age, EnumSex sex)
         {
-            this.Id = Guid.NewGuid().ToString();
             this.Name = name;
             this.Surname = surname;
             this.Dni = dni;
