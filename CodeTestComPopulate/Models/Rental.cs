@@ -18,6 +18,7 @@ namespace codeTestCom.Models
         public Price? Price { get; set; }
         public CarType CarType { get; set; }
         public bool IsCarReturned { get; set; }
+        public string UserId { get; set; }
 
         public Price CalculatePrice()
         {
@@ -99,7 +100,7 @@ namespace codeTestCom.Models
             return Price;
         }
 
-        public Rental(string carId, CarType carType, string carPartitionKey, int numOfContractedDays)
+        public Rental(string carId, CarType carType, string carPartitionKey, int numOfContractedDays, string userId)
         {
             this.Id = Guid.NewGuid().ToString();
             this.CarId = carId;
@@ -107,6 +108,7 @@ namespace codeTestCom.Models
             this.NumOfContractedDays = numOfContractedDays;
             this.PartitionKey = carPartitionKey + "#" + numOfContractedDays.ToString();
             this.IsCarReturned = false;
+            this.UserId = userId;
         }
         public override string ToString()
         {
