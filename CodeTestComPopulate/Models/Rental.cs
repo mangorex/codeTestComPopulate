@@ -17,7 +17,7 @@ namespace codeTestCom.Models
 
         public Price? Price { get; set; }
         public CarType CarType { get; set; }
-
+        public bool IsCarReturned { get; set; }
 
         public Price CalculatePrice()
         {
@@ -106,6 +106,7 @@ namespace codeTestCom.Models
             this.CarType = carType;
             this.NumOfContractedDays = numOfContractedDays;
             this.PartitionKey = carPartitionKey + "#" + numOfContractedDays.ToString();
+            this.IsCarReturned = false;
         }
         public override string ToString()
         {

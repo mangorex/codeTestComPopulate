@@ -182,7 +182,7 @@ namespace CodeTestComPopulate
             }
             catch (CosmosException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
             {
-                // Create an item in the container representing the Andersen family. Note we provide the value of the partition key for this item, which is "Andersen"
+                // Create an item in the container. Note we provide the value of the partition key for this item
                 ItemResponse<T> itemResponse = await container.CreateItemAsync<T>(item, new PartitionKey(partitionKey));
 
                 // Note that after creating the item, we can access the body of the item with the Resource property off the ItemResponse. We can also access the RequestCharge property to see the amount of RUs consumed on this request.
