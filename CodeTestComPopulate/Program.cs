@@ -23,11 +23,13 @@ namespace CodeTestComPopulate
         private Database database;
 
         // The container we will create.
-        private Container container;
+        private Container containerCar;
+        private Container containerRental;
 
         // The name of the database and container we will create
         private string databaseId = "RentalDB";
-        private string containerId = "Items";
+        private string containerIdCar = "Cars";
+        private string containerIdRental = "Rentals";
 
         private static string _rentalId;
 
@@ -71,7 +73,7 @@ namespace CodeTestComPopulate
             await this.CreateContainerAsync();
             await this.ScaleContainerAsync();
             await this.AddItemsToContainerAsync();
-            await this.QueryItemsAsync<Car>("BMW");
+            await this.QueryItemsAsync<Car>(this.containerCar, "BMW");
             await this.UpdateCarRented(true);
             await this.DeleteRentalItemAsync();
             //Dispose of CosmosClient
@@ -100,8 +102,12 @@ namespace CodeTestComPopulate
         private async Task CreateContainerAsync()
         {
             // Create a new container
-            this.container = await this.database.CreateContainerIfNotExistsAsync(containerId, "/partitionKey");
-            Console.WriteLine("Created Container: {0}\n", this.container.Id);
+            this.containerCar = await this.database.CreateContainerIfNotExistsAsync(containerIdCar, "/partitionKey");
+            this.containerRental = await this.database.CreateContainerIfNotExistsAsync(containerIdRental, "/partitionKey");
+
+            Console.WriteLine("Created Container: {0}\n", this.containerCar.Id);
+            Console.WriteLine("Created Container: {0}\n", this.containerRental.Id);
+
         }
         // </CreateContainerAsync>
 
@@ -116,13 +122,13 @@ namespace CodeTestComPopulate
             // Read the current throughput
             try
             {
-                int? throughput = await this.container.ReadThroughputAsync();
+                int? throughput = await this.containerCar.ReadThroughputAsync();
                 if (throughput.HasValue)
                 {
                     Console.WriteLine("Current provisioned throughput : {0}\n", throughput.Value);
                     int newThroughput = throughput.Value + 100;
                     // Update throughput
-                    await this.container.ReplaceThroughputAsync(newThroughput);
+                    await this.containerCar.ReplaceThroughputAsync(newThroughput);
                     Console.WriteLine("New provisioned throughput : {0}\n", newThroughput);
                 }
             }
@@ -151,14 +157,14 @@ namespace CodeTestComPopulate
             Car car7 = new Car("4444AAA", "Dacia Duster", "Dacia", CarType.Suv);
             Car car8 = new Car("5555AAA", "Volkswagen Polo", "Volkswagen", CarType.Small);
 
-            await PopulateItem(car1, car1.Id, car1.PartitionKey);
-            await PopulateItem(car2, car2.Id, car2.PartitionKey);
-            await PopulateItem(car3, car3.Id, car3.PartitionKey);
-            await PopulateItem(car4, car4.Id, car4.PartitionKey);
-            await PopulateItem(car5, car5.Id, car5.PartitionKey);
-            await PopulateItem(car6, car6.Id, car6.PartitionKey);
-            await PopulateItem(car7, car7.Id, car7.PartitionKey);
-            await PopulateItem(car8, car8.Id, car8.PartitionKey);
+            await PopulateItem(car1, car1.Id, car1.PartitionKey, this.containerCar);
+            await PopulateItem(car2, car2.Id, car2.PartitionKey, this.containerCar);
+            await PopulateItem(car3, car3.Id, car3.PartitionKey, this.containerCar);
+            await PopulateItem(car4, car4.Id, car4.PartitionKey, this.containerCar);
+            await PopulateItem(car5, car5.Id, car5.PartitionKey, this.containerCar);
+            await PopulateItem(car6, car6.Id, car6.PartitionKey, this.containerCar);
+            await PopulateItem(car7, car7.Id, car7.PartitionKey, this.containerCar);
+            await PopulateItem(car8, car8.Id, car8.PartitionKey, this.containerCar);
         }
         // </AddItemsToContainerAsync>
 
@@ -166,18 +172,18 @@ namespace CodeTestComPopulate
         /// <summary>
         /// Add one item to the container
         /// </summary>
-        private async Task PopulateItem<T>(T item, string id, string partitionKey)
+        private async Task PopulateItem<T>(T item, string id, string partitionKey, Container container)
         {
             try
             {
                 // Read the item to see if it exists.  
-                ItemResponse<T> itemResponse = await this.container.ReadItemAsync<T>(id, new PartitionKey(partitionKey));
+                ItemResponse<T> itemResponse = await container.ReadItemAsync<T>(id, new PartitionKey(partitionKey));
                 Console.WriteLine("Item in database with id: {0} already exists\n", id);
             }
             catch (CosmosException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
             {
                 // Create an item in the container representing the Andersen family. Note we provide the value of the partition key for this item, which is "Andersen"
-                ItemResponse<T> itemResponse = await this.container.CreateItemAsync<T>(item, new PartitionKey(partitionKey));
+                ItemResponse<T> itemResponse = await container.CreateItemAsync<T>(item, new PartitionKey(partitionKey));
 
                 // Note that after creating the item, we can access the body of the item with the Resource property off the ItemResponse. We can also access the RequestCharge property to see the amount of RUs consumed on this request.
                 Console.WriteLine("Created item in database with id: {0} Operation consumed {1} RUs.\n", id, itemResponse.RequestCharge);
@@ -191,7 +197,7 @@ namespace CodeTestComPopulate
         /// Run a query (using Azure Cosmos DB SQL syntax) against the container
         /// Including the partition key value of brand in the WHERE filter results in a more efficient query
         /// </summary>
-        private async Task QueryItemsAsync<T>(string partitionKey)
+        private async Task QueryItemsAsync<T>(Container container, string partitionKey)
         {
             
             var sqlQueryText = "SELECT * FROM c WHERE c.partitionKey = '" + partitionKey +"'";
@@ -199,7 +205,7 @@ namespace CodeTestComPopulate
             Console.WriteLine("Running query: {0}\n", sqlQueryText);
 
             QueryDefinition queryDefinition = new QueryDefinition(sqlQueryText);
-            FeedIterator<T> queryResultSetIterator = this.container.GetItemQueryIterator<T>(queryDefinition);
+            FeedIterator<T> queryResultSetIterator = container.GetItemQueryIterator<T>(queryDefinition);
 
             List<T> items = new List<T>();
 
@@ -221,22 +227,22 @@ namespace CodeTestComPopulate
         /// </summary>
         private async Task UpdateCarRented(bool rented)
         {
-            ItemResponse<Car> bmwfieldCarResponse = await this.container.ReadItemAsync<Car>("0000BBB", new PartitionKey("BMW"));
+            ItemResponse<Car> bmwfieldCarResponse = await this.containerCar.ReadItemAsync<Car>("0000BBB", new PartitionKey("BMW"));
             var car = bmwfieldCarResponse.Resource;
 
             // update rented status from false to true
             car.IsRented = rented;
 
             // replace the item with the updated content
-            bmwfieldCarResponse = await this.container.ReplaceItemAsync<Car>(car, car.Id, new PartitionKey(car.PartitionKey));
+            bmwfieldCarResponse = await this.containerCar.ReplaceItemAsync<Car>(car, car.Id, new PartitionKey(car.PartitionKey));
             Console.WriteLine("Updated Car [{0},{1}].\n \tBody is now: {2}\n", car.Name, car.Id, bmwfieldCarResponse.Resource);
 
             if (rented)
             {
                 Rental rental = new Rental(car.Id, car.Type, car.PartitionKey, 10);
                 rental.CalculatePrice();
-                await PopulateItem(rental, rental.Id, rental.PartitionKey);
-                await QueryItemsAsync<Rental>(rental.PartitionKey);
+                await PopulateItem(rental, rental.Id, rental.PartitionKey, this.containerRental);
+                await QueryItemsAsync<Rental>(this.containerRental, rental.PartitionKey);
                 _rentalId = rental.Id;
             }
             
@@ -252,7 +258,7 @@ namespace CodeTestComPopulate
             var partitionKeyValue = "BMW#10";
 
             // Delete an item. Note we must provide the partition key value and id of the item to delete
-            ItemResponse<Rental> BMWRentalResponse = await this.container.DeleteItemAsync<Rental>(_rentalId, new PartitionKey(partitionKeyValue));
+            ItemResponse<Rental> BMWRentalResponse = await this.containerRental.DeleteItemAsync<Rental>(_rentalId, new PartitionKey(partitionKeyValue));
             Console.WriteLine("Deleted Rental [{0},{1}]\n", partitionKeyValue, _rentalId);
 
             await UpdateCarRented(false);
