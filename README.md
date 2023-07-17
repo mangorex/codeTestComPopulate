@@ -1,3 +1,6 @@
+Este proyecto ha sido desarrollado partiendo de una base de un proyecto de Family para popular base de datos, lo he modificado entero para adaptarlo al proyecto de Rental codeTestCom.
+Está hecho con .netCore app 3.1. Primero empecé el codeTestCom, y luego toqué este. La idea era meterlo dentro de la solución del codeTestCom, pero codeTestCom es un proyecto .net 6, así que no he podido meterlo dentro y queda como proyecto a parte
+
 ---
 languages:
 - csharp
