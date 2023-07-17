@@ -1,5 +1,12 @@
-Este proyecto ha sido desarrollado partiendo de una base de un proyecto de Family para popular base de datos, lo he modificado entero para adaptarlo al proyecto de Rental codeTestCom.
-Está hecho con .netCore app 3.1. Primero empecé el codeTestCom, y luego toqué este. La idea era meterlo dentro de la solución del codeTestCom, pero codeTestCom es un proyecto .net 6, así que no he podido meterlo dentro y queda como proyecto a parte
+# codeTestComPopulate
+
+## AUTHOR: Manuel Antonio Gómez Angulo
+## START DATE: 14/07/2023
+## END DATE: 17/07/2023
+
+This project has been developed based on an existing Azure CosmosDB sample project, specifically the Family project used for populating the database. I have made extensive modifications to tailor it to the Rental codeTestCom project.
+
+The project is built with .NET Core App 3.1. I initially started with codeTestCom and then worked on this project separately. The original intention was to include it within the codeTestCom solution. However, codeTestCom is a .NET 6 project, which prevented its integration. Therefore, it remains as a separate project.
 
 ---
 languages:
