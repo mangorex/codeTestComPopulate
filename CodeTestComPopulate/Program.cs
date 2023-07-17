@@ -5,9 +5,7 @@ using System.Collections.Generic;
 using System.Net;
 using Microsoft.Azure.Cosmos;
 using codeTestCom.Models;
-using CodeTestComPopulate.Models.codeTestCom.Models;
-using User = CodeTestComPopulate.Models.codeTestCom.Models.User;
-using System.Xml.Linq;
+using User = codeTestCom.Models.User;
 
 namespace CodeTestComPopulate
 {
