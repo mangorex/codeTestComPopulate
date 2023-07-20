@@ -6,6 +6,7 @@ using System.Net;
 using Microsoft.Azure.Cosmos;
 using codeTestCom.Models;
 using User = codeTestCom.Models.User;
+using codeTestCom;
 
 namespace CodeTestComPopulate
 {
@@ -258,8 +259,11 @@ namespace CodeTestComPopulate
             if (rented)
             {
                 User user = await GetUserAsyncByNameSurname("Manuel", "Gomez");
-                Rental rental = new Rental(car.Id, car.Type, car.PartitionKey, 10, user.Dni);
-                rental.CalculatePrice();
+
+                DateTime checkin = Utils.ConvertStringToDateTime("23/07/2023");
+                DateTime checkout = Utils.ConvertStringToDateTime("02/08/2023");
+
+                Rental rental = new Rental(new Models.RentalRQ(car.Id, checkin, checkout, user.Dni), car);
                 await PopulateItem(rental, rental.Id, rental.PartitionKey, this.containerRental);
                 await QueryItemsAsync<Rental>(this.containerRental, rental.PartitionKey);
                 _rentalId = rental.Id;
@@ -274,7 +278,7 @@ namespace CodeTestComPopulate
         /// </summary>
         private async Task DeleteRentalItemAsync()
         {
-            var partitionKeyValue = "BMW#10";
+            var partitionKeyValue = "BMW";
 
             // Delete an item. Note we must provide the partition key value and id of the item to delete
             ItemResponse<Rental> BMWRentalResponse = await this.containerRental.DeleteItemAsync<Rental>(_rentalId, new PartitionKey(partitionKeyValue));

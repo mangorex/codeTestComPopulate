@@ -1,4 +1,7 @@
-﻿namespace codeTestCom
+﻿using System.Globalization;
+using System;
+
+namespace codeTestCom
 {
     public class Utils
     {
@@ -24,6 +27,14 @@
         public const int SECOND_INTERVAL_DAYS = 30;
         #endregion
 
+        public const string FORMAT_DATE = "dd/MM/yyyy";
+
+        public static DateTime ConvertStringToDateTime(string dateString)
+        {
+            DateTime dateTime;
+            DateTime.TryParseExact(dateString, FORMAT_DATE, CultureInfo.InvariantCulture, DateTimeStyles.None, out dateTime);
+            return dateTime;
+        }
         #endregion
     }
 }
