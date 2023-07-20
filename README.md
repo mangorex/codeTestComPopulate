@@ -1,3 +1,13 @@
+# codeTestComPopulate
+
+## AUTHOR: Manuel Antonio Gómez Angulo
+## START DATE: 14/07/2023
+## END DATE: 17/07/2023
+
+This project has been developed based on an existing Azure CosmosDB sample project, specifically the Family project used for populating the database. I have made extensive modifications to tailor it to the Rental codeTestCom project.
+
+The project is built with .NET Core App 3.1. I initially started with codeTestCom and then worked on this project separately. The original intention was to include it within the codeTestCom solution. However, codeTestCom is a .NET 6 project, which prevented its integration. Therefore, it remains as a separate project.
+
 ---
 languages:
 - csharp
