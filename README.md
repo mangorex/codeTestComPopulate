@@ -25,6 +25,7 @@ This sample shows you how to use the Azure Cosmos DB service to store and access
 For a complete end-to-end walkthrough of creating this application, please refer to the [full tutorial on the Azure Cosmos DB documentation page](https://aka.ms/CosmosDotnetGetStarted).
 
 ## Running this sample
+**IMPORTANT NOTE: This test would no longer work as I have deactivated the Azure Cosmos DB service, as it is a paid service.**
 
 1. Before you can run this sample, you must have the following prerequisites:
 	- An active Azure Cosmos DB account - If you don't have an account, refer to the [Create a database account](https://docs.microsoft.com/azure/cosmos-db/create-sql-api-dotnet#create-a-database-account) article.
